@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-cute: "Quicksand", "Inter", sans-serif;
+
+  --animate-shine: shine 1.5s ease-in-out infinite;
+
+  @keyframes shine {
+    0% { transform: translateX(-150%) skewX(-45deg); }
+    100% { transform: translateX(200%) skewX(-45deg); }
+  }
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-cute);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #fff0f5; /* lavenderblush as fallback */
+  color: #4a4a4a;
+  overflow-x: hidden;
+  /* Hide the default cursor for our custom cursor, but keeping it as fallback */
+  cursor: default; 
+}
+
+/* Hide scrollbar for a seamless dreamy feel */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
