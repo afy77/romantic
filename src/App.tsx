@@ -17,15 +17,41 @@ const COMPLIMENTS = [
   "Yang fana adalah waktu, namun rasa ini akan selalu abadi. Klik sekali lagi untuk kejutan terakhir... 🎁"
 ];
 
-const PHOTOS = [
-  "/WhatsApp Image 2026-05-12 at 11.15.56.jpeg",
-  "/WhatsApp Image 2026-05-12 at 11.15.57.jpeg",
-  "/WhatsApp Image 2026-05-12 at 11.15.57 (1).jpeg",
-  "/WhatsApp Image 2026-05-12 at 11.17.22.jpeg"
-];
+const photoModules = import.meta.glob('/public/*.{jpg,jpeg,png,webp,gif}');
+const PHOTOS = Object.keys(photoModules).map(path => path.replace('/public', ''));
+
+
+const LOVE_LETTER = `Hai kamu yang paling manis...
+
+Terima kasih ya sudah selalu ada,
+Bahkan di hari-hari yang mungkin tidak selalu indah.
+
+Melihat senyummu adalah bagian favoritku setiap hari.
+Aku harap, kita bisa terus membuat banyak kenangan indah bersama.
+
+Tetaplah jadi dirimu yang sekarang,
+Karena itulah alasan aku jatuh hati padamu.
+
+I love you, lebih dari kata-kata. 💕`;
+
+const TypewriterText = ({ text }: { text: string }) => {
+  const [displayedText, setDisplayedText] = useState("");
+
+  React.useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+      setDisplayedText(text.slice(0, i + 1));
+      i++;
+      if (i === text.length) clearInterval(interval);
+    }, 70); // Typing speed
+    return () => clearInterval(interval);
+  }, [text]);
+
+  return <span className="whitespace-pre-line">{displayedText}</span>;
+};
 
 export default function App() {
-  const [step, setStep] = useState<'intro' | 'bubbles' | 'gift' | 'gallery'>('intro');
+  const [step, setStep] = useState<'intro' | 'bubbles' | 'gift' | 'gallery' | 'letter'>('intro');
   const [bubbleIndex, setBubbleIndex] = useState(0);
   const { isMuted, toggleMute, playBgm, playPop } = useAudio();
 
@@ -59,6 +85,8 @@ export default function App() {
     bgClass = "bg-neutral-900 transition-colors duration-2000";
   } else if (step === 'gallery') {
     bgClass = "bg-[#1a0b2e] transition-colors duration-1000"; // Dreamy night sky
+  } else if (step === 'letter') {
+    bgClass = "bg-rose-950 transition-colors duration-1000"; // Deep romantic red/pink
   }
 
   return (
@@ -248,6 +276,44 @@ export default function App() {
                 </motion.div>
               );
             })}
+            
+            {/* Button to go to letter */}
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: PHOTOS.length * 0.4 + 2, duration: 1 }}
+              className="absolute bottom-8 md:bottom-12 z-50"
+            >
+              <button 
+                onClick={() => setStep('letter')}
+                className="px-6 py-3 bg-white/20 backdrop-blur-md border border-white/40 rounded-full shadow-lg text-white font-cute text-lg flex items-center gap-2 hover:bg-white/30 hover:scale-105 active:scale-95 transition-all"
+              >
+                ada satu pesan lagi buat kamu 💌
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {step === 'letter' && (
+          <motion.div 
+            key="letter"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.5 }}
+            className="z-10 w-full max-w-2xl p-8 md:p-12"
+          >
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 p-8 md:p-10 rounded-3xl shadow-2xl text-pink-50 font-cute text-lg md:text-xl leading-relaxed tracking-wide min-h-[60vh] flex flex-col justify-center">
+              <TypewriterText text={LOVE_LETTER} />
+              
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 20 }} // Shows up roughly after typing is done
+                className="mt-12 text-center"
+              >
+                <Heart size={32} className="inline-block text-pink-400 fill-pink-400 animate-pulse" />
+              </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
